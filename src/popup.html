@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Auto Tab Options</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Auto Tab Options</h1>
+      <button id="activateTabs">Activate Tabs</button>
+      <hr/>
+      <label for="interval">Switch interval (seconds):</label>
+      <input type="number" id="interval" min="1" value="15" />
+      <button id="save">Save</button>
+      <button id="toggle">Enable</button>
+      <hr/>
+      <label for="scrollValue">Scroll Value:</label>
+      <input type="number" id="scrollValue" value="212" />
+      <button id="scrollTabs">Scroll Tabs</button>
+      <button id="scrollActiveTab">Scroll Active Tab</button>
+    </div>
+    <script src="popup.js"></script>
+  </body>
+</html>

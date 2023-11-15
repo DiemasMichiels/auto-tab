@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "Auto Tab",
+  "version": "1.0",
+  "description": "Activates all tabs. Scrolls to all tabs in a window. Scrolls to specific positions.",
+  "permissions": ["activeTab", "scripting"],
+  "action": {
+    "default_icon": {
+      "16": "icon.png"
+    },
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  }
+}
