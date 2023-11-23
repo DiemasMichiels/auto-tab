@@ -5,18 +5,21 @@ document.addEventListener('DOMContentLoaded', () => {
   const activateTabsButton = document.getElementById('activateTabs');
   activateTabsButton.addEventListener('click', () => {
     chrome.runtime.sendMessage({ action: 'activateTabs' });
+    window.close();
   });
 
   const scrollTabsButton = document.getElementById('scrollTabs');
   scrollTabsButton.addEventListener('click', () => {
     const scrollValue = document.getElementById('scrollValue').value;
     chrome.runtime.sendMessage({ action: 'scrollTabs', scrollValue: scrollValue });
+    window.close();
   });
 
   const scrollActiveTabButton = document.getElementById('scrollActiveTab');
   scrollActiveTabButton.addEventListener('click', () => {
     const scrollValue = document.getElementById('scrollValue').value;
     chrome.runtime.sendMessage({ action: 'scrollActiveTab', scrollValue: scrollValue });
+    window.close();
   });
 
   saveButton.addEventListener('click', () => {
@@ -37,6 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         toggleButton.textContent = 'Enable';
       }
+      window.close();
     });
   });
 });
