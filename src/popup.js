@@ -1,7 +1,28 @@
-const saveButton = document.getElementById('save');
 const toggleButton = document.getElementById('toggle');
 
+// Restore values from chrome.storage when the page loads
+chrome.storage.sync.get(['interval', 'scrollValue'], function(items) {
+  if(items.interval) {
+    document.getElementById('interval').value = items.interval;
+  }
+
+  if(items.scrollValue) {
+    document.getElementById('scrollValue').value = items.scrollValue;
+  }
+});
+
 document.addEventListener('DOMContentLoaded', () => {
+  const intervalInput = document.getElementById('interval');
+  const scrollValueInput = document.getElementById('scrollValue');
+
+  intervalInput.oninput = function() {
+    chrome.storage.sync.set({'interval': this.value});
+  }
+
+  scrollValueInput.oninput = function() {
+    chrome.storage.sync.set({'scrollValue': this.value});
+  }
+
   const activateTabsButton = document.getElementById('activateTabs');
   activateTabsButton.addEventListener('click', () => {
     chrome.runtime.sendMessage({ action: 'activateTabs' });
@@ -10,27 +31,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const scrollTabsButton = document.getElementById('scrollTabs');
   scrollTabsButton.addEventListener('click', () => {
-    const scrollValue = document.getElementById('scrollValue').value;
-    chrome.runtime.sendMessage({ action: 'scrollTabs', scrollValue: scrollValue });
+    chrome.runtime.sendMessage({ action: 'scrollTabs' });
     window.close();
   });
 
   const scrollActiveTabButton = document.getElementById('scrollActiveTab');
   scrollActiveTabButton.addEventListener('click', () => {
-    const scrollValue = document.getElementById('scrollValue').value;
-    chrome.runtime.sendMessage({ action: 'scrollActiveTab', scrollValue: scrollValue });
+    chrome.runtime.sendMessage({ action: 'scrollActiveTab' });
     window.close();
-  });
-
-  saveButton.addEventListener('click', () => {
-    const interval = document.getElementById('interval').value;
-    chrome.runtime.sendMessage(
-      { type: 'updateInterval', interval: interval },
-      () => {
-        alert('Interval saved!');
-        window.close();
-      }
-    );
   });
 
   toggleButton.addEventListener('click', () => {
@@ -44,7 +52,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 });
-
 
 chrome.runtime.sendMessage({ type: 'getActiveState' }, (response) => {
   if (response?.active) {

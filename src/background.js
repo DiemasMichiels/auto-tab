@@ -1,18 +1,33 @@
 let currentInterval = 15;
 let active = false;
 let activeWindowId = null;
+let scrollValue = 200;
 
+chrome.action.onClicked.addListener(async () => {
+  let { interval, scrollValue } = await chrome.storage.sync.get(['interval', 'scrollValue']);
+  currentInterval = interval || currentInterval;
+  scrollValue = scrollValue || scrollValue;
+});
+
+chrome.storage.onChanged.addListener((changes, area) => {
+  if (area === 'sync') {
+    if (changes.interval?.newValue) {
+      currentInterval = changes.interval.newValue;
+    }
+
+    if (changes.scrollValue?.newValue) {
+      scrollValue = changes.scrollValue.newValue;
+    }
+  }
+});
 
 chrome.runtime.onMessage.addListener((request, _, sendResponse) => {
   if (request.action === 'activateTabs') {
     activateTabs();
   } else if (request.action === 'scrollTabs') {
-    scrollTabs(request);
+    scrollTabs();
   } else if (request.action === 'scrollActiveTab') {
-    scrollActiveTab(request);
-  } else if (request.type === 'updateInterval') {
-    currentInterval = request.interval;
-    sendResponse();
+    scrollActiveTab();
   } else if (request.type === 'toggle') {
     active = !active;
 
@@ -44,29 +59,29 @@ function activateTabs() {
   });
 }
 
-function scrollTabs(request) {
+function scrollTabs() {
   chrome.tabs.query({ currentWindow: true }, (tabs) => {
     let delay = 0;
 
     tabs.forEach((tab) => {
       setTimeout(() => {
         chrome.tabs.update(tab.id, { active: true }, () => {
-          executeScrollScript(tab.id, parseInt(request.scrollValue));
+          executeScrollScript(tab.id);
         });
       }, delay);
-      delay += 1;
+      delay += 10;
     });
   });
 }
 
-function scrollActiveTab(request) {
+function scrollActiveTab() {
   chrome.tabs.query({ currentWindow: true, active: true }, (tabs) => {
     const activeTab = tabs[0];
-    executeScrollScript(activeTab.id, parseInt(request.scrollValue));
+    executeScrollScript(activeTab.id);
   });
 }
 
-function executeScrollScript(tabId, scrollValue) {
+function executeScrollScript(tabId) {
   chrome.scripting.executeScript({
     target: { tabId: tabId },
     func: function scroll(scrollValue) { window.scrollTo(0, scrollValue) },
